@@ -3,6 +3,7 @@ import { decksAPI, UpdateDeckParams } from './decks-api.ts'
 import { addDeckAC, deleteDeckAC, setDecksAC, updateDeckAC } from './decks-reducer.ts'
 import { setLoaderAC } from '../../app/app-reducer.ts'
 import axios, { isAxiosError } from 'axios'
+import { ErrorMes } from '../../common/utils/handle-error.ts'
 
 // export const fetchDecksTC = () => (dispatch: Dispatch) => {
 //   decksAPI.fetchDecks().then((res) => {
@@ -48,17 +49,11 @@ export const updateDeckTC = (params: UpdateDeckParams) => async (dispatch: Dispa
     // throw new Error("WWW")
     const res =await decksAPI.updateDeck(params)
     dispatch(updateDeckAC(res.data))
-  } catch (error) {
-    let errorMessages:string
-    if (isAxiosError<ServerError>(error)) {
-      errorMessages =error.response? error.response.data.errorMessages[0].message?'': error.message
-    }else{
-      errorMessages = (error as Error).message
-    }
-    console.log(errorMessages)
+  } catch ( error) {
+    console.log('error',error)
+    ErrorMes(error, dispatch)
   }
 }
 
-type ServerError={
-  errorMessages:Array<{field:string,message:string}>,
-}
+
+
